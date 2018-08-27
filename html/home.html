@@ -177,11 +177,40 @@
       <form action="" id="formdataHelper" hidden="true" enctype="multipart/form-data" name="on-my-way" method="post">
         <input type="" name="gdData" value="" class="gdData" />
       </form>
-      <div class="rightDown"></div>
+      <div class="rightDown">
+        <p class="policeList">
+          警员列表
+        </p>
+        <button class="test-getfl">点击获取联系人</button>
+        <div class="lc-policeOnline Friend" onclick="onclickOnlinePolice()">
+          <button class="lc-policeOnline">在线警员</button>
+        </div>
+        <div class="lc-group1">
+          <button class="lc-group1">东城区执勤小组</button>
+        </div>
+        <div class="lc-group2">
+          <button class="lc-group2">西城区执勤小组</button>
+        </div>
+        <div class="lc-unGroup">
+          <button class="lc-unGroup">未分组警员</button>
+        </div>
+      </div>
     </div>
     <!-- <div class="rightDown">team members info</div> -->
   </div>
-
+  <div id="lc-chatPage">
+    <div id="lc-policeName">policename</div>
+    <div id="lc-chatBox">chatBox</div>
+    <div id="lc-editBox">
+      <input id="lc-wordinput" type="text" />
+      <img id="lc-voice-img" src="" />
+    </div>
+    <div id="lc-operateButton">
+      <button id="lc-sendMsg">发送</button>
+      <button id="lc-seacher">浏览</button>
+      <button id="lc-close-chatPage" onclick="closeChatPage()">返回</button>
+    </div>
+  </div>
   <div class="mainMenuBar">
     <a href="#" class="btnLogout">logout</a>
     <b class="mainClock">--</b>

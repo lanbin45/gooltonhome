@@ -21,9 +21,9 @@
                   },
                   "home.js": {
                     "type": "-",
-                    "size": 14087,
-                    "lmtime": 1535351029786,
-                    "modified": true
+                    "size": 22263,
+                    "lmtime": 1535366156050,
+                    "modified": false
                   },
                   "eventTimer.js": {
                     "type": "-",
@@ -128,9 +128,9 @@
                   },
                   "home.html": {
                     "type": "-",
-                    "size": 9836,
+                    "size": 9993,
                     "lmtime": 1535339724087,
-                    "modified": false
+                    "modified": true
                   }
                 },
                 "home.js": {

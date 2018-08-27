@@ -140,3 +140,72 @@ div.leftDown div.video-panel {
   display: none;
 }
 /* div leftDown styles end here */
+
+/* div rightDown styles start here */
+div.rightDown{
+  position: relative;
+  padding-top:3px;
+  
+}
+div.policeList,div.lc-policeOnline,div.lc-group1,div.lc-group2,div.lc-unGroup{
+  margin-bottom: 8px;
+}
+p.policeList,button.lc-policeOnline,button.lc-group1,button.lc-group2,button.lc-unGroup{
+  background-color: #0b473f;
+  border:1px solid #1efec8;
+  color:#fff;
+  width:46%;
+  margin-bottom: 0%;
+  /* position: relative; */
+}
+div.Friend{
+  height:auto;
+}
+p.policeList{
+  width:30%;
+  margin: 7% 30% 5% 36% !important;
+  /* margin-bottom: 20px; */
+  padding:0% 0% 0% 7%;
+  /* position: relative; */
+  left:20%;
+  top:20%
+}
+/* popupchatpage */
+div#lc-chatPage{
+  position: absolute;
+  bottom: 10%;
+  right:10%;
+  background-color:#4e595A;
+  width:450.5px;
+  height:370.53px;
+  padding:2% 5% 1% 5%;
+  z-index: -2;
+  opacity:0.5;
+  border:1px solid #1efec8
+}
+div#lc-chatPage div#lc-policeName,div#lc-chatPage div#lc-editBox,div#lc-chatPage div#lc-operateButton,div#lc-chatPage div#lc-chatBox{
+  margin-top:0;
+  margin-bottom: 10px;
+}
+div#lc-chatPage div#lc-chatBox{
+  background-color: #fff;
+  width:340px;
+  height:200px;
+}
+div#lc-chatPage div#lc-policeName{
+  background-color:#112e29;
+  width:25%;
+  border:1px solid #1efec8;
+  margin-left:33%;
+  margin-bottom: 20px;
+  color: white
+  /* height:60%; */
+}
+div#lc-chatPage div#lc-editBox{
+  background-color:#0b473f;
+  width:86%;
+  height:20%;
+}
+
+
+/* div rightDown styles end here */

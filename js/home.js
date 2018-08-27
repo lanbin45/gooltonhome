@@ -13,7 +13,6 @@ $(document).ready(function() {
 });
 
 /* div rightDown js start here */
-
 function initRightDownRegion() {
   var sign = true
   // gdEventTimer.addEvent('getFriendList', '1', '.Friend')
@@ -21,13 +20,128 @@ function initRightDownRegion() {
   // $(".Friend").on('getFriendList', function () {
   //   lunxun()
   // })
-  $(".test-getfl").on('click', function() {
+  $(".test-getfl").on('click', function () {
       lunxun()
   })
+  gAjaxPost.personalInformation = null,
+      gAjaxPost.lasttimeFriend = [],
+      gAjaxPost.currFriend = [],
+      gAjaxPostlastDialogID = 0,    //上一次发过来的数据的最后的dialogID
+      gAjaxPost.currChatFriendID = null,
+      gAjaxPost.friendList = function (response, parent) {
+          gAjaxPost.personalInformation = JSON.parse(response)['data']
+          kk = JSON.parse(response)
+          gAjaxPost.currFriend = []
+          for (var i = 0; i < kk['data'].length; i++) {
+              gAjaxPost.currFriend[i] = parseInt(kk['data'][i]['userID'])
+          }
+          //remove friend offline
+          for (var i = 0; i < gAjaxPost.lasttimeFriend.length; i++) {
+              if (gAjaxPost.currFriend.indexOf(gAjaxPost.lasttimeFriend[i]) == -1) {
+                  $("#" + gAjaxPost.lasttimeFriend[i]).remove()					//delete friend off line
+              }
+          }
 
+          for (var i = 0; i < gAjaxPost.currFriend.length; i++) { //add friend new online
+              if (gAjaxPost.lasttimeFriend.indexOf(gAjaxPost.currFriend[i]) == -1) {
+                  var agentlist = gAjaxPost.currFriend
+
+                  var childdiv = $('<div></div>');   // create div node
+                  //var b='child'+i;              
+                  childdiv.attr('id', '' + gAjaxPost.currFriend[i]);          //set id                     //set css style
+                  childdiv.attr('class', 'forclick')
+                  childdiv.attr('data-chat', '[' + ']')   //set data-chat
+                  parentdiv = parent
+                  parentdiv.append(childdiv)
+                  if (parseInt($('._gdData').data('user-id')) == gAjaxPost.currFriend[i]) {
+                      $('#' + gAjaxPost.currFriend[i]).html(kk['data'][i]['userName'] + '                   ME')  //sign of me
+                  } else {
+                      $('#' + gAjaxPost.currFriend[i]).html(kk['data'][i]['userName']);
+                  }
+                  $('#' + gAjaxPost.currFriend[i]).css({ "padding": "10px 5px", "border-style": "solid", "border-width": "5px", "background-color": "#0b473f", "border": "1px solid #1efec8", "width": "30%", "height": "5%", "margin": "5px 0px 0px 0px" })
+                  // myvideo.play()
+                  //$("#onlinesound").play()
+              }
+          }
+
+          gAjaxPost.lasttimeFriend = [].concat(gAjaxPost.currFriend)
+          lunxunChatData()
+      }
+  gAjaxPost.receiveChatData = function (response) {                    //应将data-chat初始化，然后往里动态添加
+      var a = JSON.parse(response);
+      if (a['data'].length != 0) {
+          var M = a['data'].length;
+          for (var i = 0; i < a['data'].length; i++) {   //轮询每条收到的数据   
+              var index = gAjaxPost.currFriend.indexOf(parseInt(a['data'][i]['senderID']))
+              if (index != -1) {
+                  $('#' + gAjaxPost.currFriend[index]).data('chat').push(a['data'][i])
+              }//实时往聊天对话框加信息
+              if (a['data'][i]['senderID'] == gAjaxPost.currChatFriendID) {
+                  var childdiv = $("<div></div>")
+                  var timestamp = (new Date()).getTime();
+                  var b = 'div_' + timestamp;
+                  childdiv.attr('id', b);
+                  var parentdiv = $('.div1_0')
+                  parentdiv.append(childdiv)
+                  parentdiv.append($('<br />'))
+                  $("#" + b).html(a['data'][i]['textMsg'])
+              }
+          }
+          gAjaxPost.lastDialogID = parseInt(a['data'][M - 1]['dialogID'])
+          console.log(gAjaxPost.lastDialogID)
+      }
+  }
+  gAjaxPost.chatRecord = function (a) {
+      $("#lc-chatBox").empty()
+      gAjaxPost.currChatFriendID = $(a).attr("id");      //获取当前联系人的ID
+      var read = $('#' + gAjaxPost.currChatFriendID).data('chat');	//read chat record
+      console.log(read)
+      if (read.length != 0) {                                //为空并不是undefined
+          for (var i = 0; i < read.length; i++) {
+              var childdiv = $('<div></div>'); //creat div
+              var b = 'div_' + i;
+              childdiv.attr('id', b);
+              parentdiv = $('#lc-chatBox');
+              parentdiv.append(childdiv)
+              parentdiv.append($('<br />'))
+              $('#' + b).html(read[i]['textMsg']);
+              if (read[i]['senderID'] == $('._gdData').data('user-id')) {
+                  $("#" + b).css({ "position": "absolute", "right": "10px" })
+              }
+          }
+      }
+  }
+  gAjaxPost.sendMsg = function () {
+      var sendMsg = {						//发送消息
+          "commonKey": "100",
+          "appKey": "4",
+          "sessionID": $('._gdData').data('session-id'),
+          "data": {
+              // "senderID": "15",
+              "senderID": $('._gdData').data('user-id'),
+              "receiverID": gAjaxPost.currChatFriendID,
+              "groupID": "groupID",
+              "msgType": "1",
+              "textMsg": $("#lc-wordinput").val(),
+              "lastDialogID": gAjaxPost.lastDialogID,
+              "contentType": "1",
+          }
+      }
+      gAjaxPost.postOut("jsonGateway.php", JSON.stringify(sendMsg), $("sendMSG"))//这里没有将响应做处理
+      $("#" + gAjaxPost.currChatFriendID).data('chat').push(sendMsg['data'])
+      var childdiv = $('<div></div>'); //creat div
+      var timestamp = (new Date()).getTime();
+      var b = 'div_' + timestamp;
+      childdiv.attr('id', b);
+      parentdiv = $('.div1_0');
+      parentdiv.append(childdiv)
+      parentdiv.append($('<br />'))
+      $("#" + b).html(sendMsg['data']['textMsg'])
+      $("#" + b).css({ "position": "absolute", "right": "10px" })
+  }
   //gAjaxPost.chatRecord() //query chatrecord
 
-  $('.Friend').on('mouseover', '.forclick', function(event) { //mouseover display personal information 
+  $('.Friend').on('mouseover', '.forclick', function (event) { //mouseover display personal information 
       //send msg
       for (var i = 0; i < gAjaxPost.personalInformation.length; i++)
           if ($(this).attr('id') == gAjaxPost.personalInformation[i]['userID']) {		 //get id
@@ -35,14 +149,14 @@ function initRightDownRegion() {
           }
   })
 
-  $('.Friend').on('click', '.forclick', function(event) {
-    var name=$("this").html()
-    $('#lc-policeName').html(name)
-    var a=this
+  $('.Friend').on('click', '.forclick', function (event) {
+      var name = $("this").html()
+      $('#lc-policeName').html(name)
+      var a = this
       popUpChatPage()
       gAjaxPost.chatRecord(a)
   })
-  $("#sendMSG").click(function() {
+  $("#sendMSG").click(function () {
       gAjaxPost.sendMsg()
   })
 }
@@ -52,16 +166,16 @@ function popUpChatPage() {
   var offsetX = 0;
   var offsetY = 0;
   var bool = false;
-  $("div#lc-chatPage").mousedown(function() {
+  $("div#lc-chatPage").mousedown(function () {
       bool = true;
       offsetX = event.offsetX;
       offsetY = event.offsetY;
       $("#lc-close-chatPage").css('cursor', 'move');
   })
-  $("div#lc-chatPage").mouseup(function() {
+  $("div#lc-chatPage").mouseup(function () {
       bool = false;
   })
-  $(document).mousemove(function(e) {
+  $(document).mousemove(function (e) {
       if (!bool)
           return;
       var x = event.clientX - offsetX;
@@ -76,7 +190,6 @@ function openChatPage() {
 function closeChatPage() {
   $("#lc-chatPage").css({ "z-index": "-2" })
 }
-
 function onclickOnlinePolice() {
   if ($('.forclick').is(':visible')) {
       $('.forclick').css({ "display": "none" })
@@ -85,40 +198,41 @@ function onclickOnlinePolice() {
   }
   //控制div的显示
 }
-
 function lunxun() {
   var url_1 = "jsonGateway.php"
   var jsondata = {
       "commonKey": "100",
       "appKey": "1",
-      "sessionID": $('._gdData').data('session-id'),
+      //"sessionID": $('._gdData').data('session-id'),
       "data": {
-          "senderID": $('._gdData').data('user-id')
+          // "senderID": $('._gdData').data('user-id')
+          "senderID": "15"
       }
   }
   gAjaxPost.postOut(url_1, JSON.stringify(jsondata), $('.Friend'))
-  $(".Friend").one("postResponse", function(event, response) {
+  $(".Friend").one("postResponse", function (event, response) {
       gAjaxPost.friendList(response, $(".Friend"))
   })
 }
-
 function lunxunChatData() {
   var jsondata = {
       "commonKey": "100",
       "appKey": "3",
       "sessionID": $('._gdData').data('session-id'),
       "data": {
-          "senderID": $('._gdData').data('user-id'),
+          // "senderID": $('._gdData').data('user-id'),
+          "senderID": "15",
           "lastDialogID": gAjaxPost.lastDialogID
       }
   }
   gAjaxPost.postOut("jsonGateway.php", JSON.stringify(jsondata), $(".right")) //friendbox随便绑定的
-  $(".file").one("postResponse", function(event, data) {
+  $(".right").one("postResponse", function (event, data) {
       var a = JSON.parse(data);
       console.log(a['appKey'] + "-------------------" + a['data'].length + "--------------")
       gAjaxPost.receiveChatData(data)
   })
 }
+
 
 /* div rightDown js end here */
 
