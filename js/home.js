@@ -8,6 +8,7 @@ $(document).ready(function() {
   console.log("loaded");
   initRightupRegion()
   initRightDownRegion()
+  // dev branch test
 });
 
 /* div rightDown js start here */
