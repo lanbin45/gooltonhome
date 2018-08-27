@@ -7,8 +7,120 @@ $(document).ready(function() {
   $("div.infoLeft").html("update this panel"); 
   console.log("loaded");
   initRightupRegion()
+  initRightDownRegion()
 });
 
+/* div rightDown js start here */
+
+function initRightDownRegion() {
+  var sign = true
+  // gdEventTimer.addEvent('getFriendList', '1', '.Friend')
+  // gdEventTimer.startTimer()
+  // $(".Friend").on('getFriendList', function () {
+  //   lunxun()
+  // })
+  $(".test-getfl").on('click', function() {
+      lunxun()
+  })
+
+  //gAjaxPost.chatRecord() //query chatrecord
+
+  $('.Friend').on('mouseover', '.forclick', function(event) { //mouseover display personal information 
+      //send msg
+      for (var i = 0; i < gAjaxPost.personalInformation.length; i++)
+          if ($(this).attr('id') == gAjaxPost.personalInformation[i]['userID']) {		 //get id
+              $(this).attr('title', '账号' + ':' + gAjaxPost.personalInformation[i]['userID'] + '----' + 'userName' + ':' + gAjaxPost.personalInformation[i]['userName'])
+          }
+  })
+
+  $('.Friend').on('click', '.forclick', function(event) {
+    var name=$("this").html()
+    $('#lc-policeName').html(name)
+    var a=this
+      popUpChatPage()
+      gAjaxPost.chatRecord(a)
+  })
+  $("#sendMSG").click(function() {
+      gAjaxPost.sendMsg()
+  })
+}
+
+function popUpChatPage() {
+  openChatPage()
+  var offsetX = 0;
+  var offsetY = 0;
+  var bool = false;
+  $("div#lc-chatPage").mousedown(function() {
+      bool = true;
+      offsetX = event.offsetX;
+      offsetY = event.offsetY;
+      $("#lc-close-chatPage").css('cursor', 'move');
+  })
+  $("div#lc-chatPage").mouseup(function() {
+      bool = false;
+  })
+  $(document).mousemove(function(e) {
+      if (!bool)
+          return;
+      var x = event.clientX - offsetX;
+      var y = event.clientY - offsetY;
+      $("div#lc-chatPage").css("left", x);
+      $("div#lc-chatPage").css("top", y);
+  })
+}
+function openChatPage() {
+  $("#lc-chatPage").css({ "z-index": "2" })
+}
+function closeChatPage() {
+  $("#lc-chatPage").css({ "z-index": "-2" })
+}
+
+function onclickOnlinePolice() {
+  if ($('.forclick').is(':visible')) {
+      $('.forclick').css({ "display": "none" })
+  } else {
+      $('.forclick').css({ "display": "block" })
+  }
+  //控制div的显示
+}
+
+function lunxun() {
+  var url_1 = "jsonGateway.php"
+  var jsondata = {
+      "commonKey": "100",
+      "appKey": "1",
+      "sessionID": $('._gdData').data('session-id'),
+      "data": {
+          "senderID": $('._gdData').data('user-id')
+      }
+  }
+  gAjaxPost.postOut(url_1, JSON.stringify(jsondata), $('.Friend'))
+  $(".Friend").one("postResponse", function(event, response) {
+      gAjaxPost.friendList(response, $(".Friend"))
+  })
+}
+
+function lunxunChatData() {
+  var jsondata = {
+      "commonKey": "100",
+      "appKey": "3",
+      "sessionID": $('._gdData').data('session-id'),
+      "data": {
+          "senderID": $('._gdData').data('user-id'),
+          "lastDialogID": gAjaxPost.lastDialogID
+      }
+  }
+  gAjaxPost.postOut("jsonGateway.php", JSON.stringify(jsondata), $(".right")) //friendbox随便绑定的
+  $(".file").one("postResponse", function(event, data) {
+      var a = JSON.parse(data);
+      console.log(a['appKey'] + "-------------------" + a['data'].length + "--------------")
+      gAjaxPost.receiveChatData(data)
+  })
+}
+
+/* div rightDown js end here */
+
+/** added by lb ----start----- */
 function initRightupRegion() {
   gAjaxPost.aysncPost = function(url, package, callback){
     var json={gdData:gAjaxPost.finalPack(package)};
@@ -342,4 +454,4 @@ function resetZoom() {
   attachToMainPlayer()
 }
 
-///
+/** added by lb ----start----- */
