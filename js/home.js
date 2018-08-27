@@ -8,6 +8,7 @@ $(document).ready(function() {
   console.log("loaded");
   initRightupRegion()
   initRightDownRegion()
+  initialThisPartie();
   // zhang branch test
 });
 
@@ -456,3 +457,248 @@ function resetZoom() {
 }
 
 /** added by lb ----start----- */
+
+///ZXH部分
+
+function initialThisPartie() {
+  initialVars();
+  initialMap();
+  initialAgentsandGroup();
+  initData();
+}
+function initialVars() {
+  var global = global || {};
+  window.global = global;
+  //初始化version配置
+  gVersion.init();
+  //自动更新当前version
+  gVersion.updateVersion();
+  //初始化异步响应
+  gAjaxPost.init();
+  gAjaxPost.AsyncPostFormData = function (url, formData, origin, callback) {   // formData is FormData object
+
+    gAjaxPost.origin = $(origin);    // make it jquery style
+
+    $.ajax({
+      url: url,
+      type: "POST",
+      processData: false,
+      contentType: false,
+      //   	   contentType: "multipart/form-data",
+      data: formData,
+      success: function (response, status, xhr) {
+        callback(response);	  // return result by event postResponse
+      }
+    });
+  }
+  gAjaxPost.asyncPost = function (url, package, origin, callback) {
+    var json = { gdData: gAjaxPost.finalPack(package) };  // build data for post
+
+    gAjaxPost.origin = $(origin);    // make it jquery style
+
+    $.post(
+      url,   // url
+      json,                     // data
+      function (response, status, xhr) {
+        callback(response)                     // success, 
+      });
+  }
+}
+function initialMap() {
+  var map = new BMap.Map("allmap");
+  global.map = map;
+  //创建控件
+  var top_left_control = new BMap.ScaleControl({ anchor: BMAP_ANCHOR_TOP_LEFT });// 左上角，添加比例尺
+  var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
+  //添加控件
+  map.addControl(top_left_control);
+  map.addControl(top_left_navigation);
+  map.centerAndZoom(new BMap.Point(116, 40), 2);  // 设置中心点
+  map.addControl(new BMap.MapTypeControl());
+  map.enableScrollWheelZoom(true);
+}
+
+function initData() {
+  //每隔3秒执行一次方法
+  //初始化GPS中的定位点坐标，并每3秒刷新其坐标
+  window.setInterval("initialAgentsandGroup()", 10000);
+
+}
+//桌面弹窗报警提示
+function showNotice() {
+  Notification.requestPermission(function (perm) {
+    if (perm == "granted") {
+      var notification = new Notification("收到报警信息！", {
+        dir: "auto",
+        lang: "alert",
+        tag: "test",
+        icon: null,
+        body: "检测到警情！"
+      })
+    }
+  })
+}
+
+function initialAgentsandGroup() {
+  jsonPkg = {
+    "commonKey": 200,
+    "appKey": 1,
+    "tag": "",
+    "option": "",
+    "priority": 1,
+    "timeStamp": "",
+    "arrivalTime": "",
+    "status": -1,
+    "errorMsg": "something wrong",
+    "data": ""
+  };
+  var url = "../../jsonGateway.php";
+  urlbackend = url;
+  gAjaxPost.asyncPost(url, JSON.stringify(jsonPkg), this, function (res) {
+    responseHandler_GPSRefresh(res)
+    console.log(res)
+    var data = JSON.parse(res);
+    filtrageAlertEvent(data)
+  });
+}
+
+function responseHandler_GPSRefresh(response) {
+  global.map.clearOverlays()
+  //创建地图     
+  addMarker(JSON.parse(response).data);
+
+}
+
+
+//创建标注点并添加到地图中
+function addMarker(points) {
+  //循环建立标注点
+  var marker;
+  for (var i = 0, pointsLen = points.length; i < pointsLen; i++) {
+    var point = new BMap.Point(points[i].gpsLongtitude, points[i].gpsLatitude); //将标注点转化成地图上的点
+    if (Number(points[i].status) === 1) {
+      var gmyIcon = new BMap.Icon("../image/normal_marker.png", new BMap.Size(50, 50));
+      marker = new BMap.Marker(point, { icon: gmyIcon });  // 创建标注
+    } else if (Number(points[i].status) === 2) {
+      var gmyIcon = new BMap.Icon("../image/alarm_marker.png", new BMap.Size(50, 50));
+      marker = new BMap.Marker(point, { icon: gmyIcon });  // 创建标注
+    } else if (Number(points[i].status) === 3) {
+      var gmyIcon = new BMap.Icon("../image/pre_marker.png", new BMap.Size(50, 50));
+      marker = new BMap.Marker(point, { icon: gmyIcon });  // 创建标注
+    }
+
+
+    // var marker = new BMap.Marker(point); //将点转化成标注点
+    global.map.addOverlay(marker);  //将标注点添加到地图上
+    // gmarker.setAnimation(BMAP_ANIMATION_BOUNCE);
+    processMarker(i, points, marker)
+  }
+}
+function processMarker(i, points, marker) {
+  var thePoint = points[i];
+  marker.addEventListener('click', function (event, data) {
+    switch (event.type) {
+      case 'onclick':
+        showInfo(this, thePoint);
+        global.PKG = configFormData('3', thePoint.userID.toString(), '1', '2', null, null, '100');
+        global.receiverID = thePoint.userID
+        global.receiverName = thePoint.fullName
+        global.sceneID = thePoint.sceneID
+        global.curMarker = this;
+        global.point = thePoint;
+        asynRefresh(global.PKG);
+        global.refreshMarker = setInterval('asynRefresh(global.PKG)', 3000);
+        break;
+    };
+  });
+}
+function asynRefresh(jsonPkg) {
+  gAjaxPost.AsyncPostFormData('../../jsonGateway.php', jsonPkg, this, function (response) {
+    // ResponseHandler_clickMarker(response);
+  });
+}
+function showInfo(thisMarker, point) {
+  //获取点的信息
+  var sContent = "";
+  if (point.status == 2) {
+    sContent =
+      '<ul style="margin:0 0 5px 0;padding:0.2em 0">'
+      + '<li style="line-height: 26px;font-size: 15px;">'
+      + '<span style="width: 50px;display: inline-block;">编号：</span>' + point.userID + '</li>'
+      + '<li style="line-height: 26px;font-size: 15px;">'
+      + '<span style="width: 100px;display: inline-block;">行动单位：</span>' + point.userName + '</li>'
+      + '<li style="line-height: 26px;font-size: 15px;">'
+      + '<button id="getVideo" onclick="gethandleVideo()" style="width: 100px;display: inline-block;">处理现场</button>'
+      + '<button id="cancel" style="width: 100px;display: inline-block;">取消</button>'
+      + '</ul>';
+    global.receiverID = point.userID;
+    global.receiverName = point.userName;
+  } else if (point.status == 1 || point.status == 3) {
+    sContent =
+      '<ul style="margin:0 0 5px 0;padding:0.2em 0">'
+      + '<li style="line-height: 26px;font-size: 15px;">'
+      + '<span style="width: 50px;display: inline-block;">编号：</span>' + point.userID + '</li>'
+      + '<li style="line-height: 26px;font-size: 15px;">'
+      + '<span style="width: 100px;display: inline-block;">行动单位：</span>' + point.userName + '</li>'
+      + '<li style="line-height: 26px;font-size: 15px;">'
+      + '<span style="width: 100px;display: inline-block;">更新时间：</span></br>' + point.birthday + '</li>'
+      + '<button id="getlNormalVideo" onclick="getVideo()" style="width: 100px;display: inline-block;">现场视频</button>'
+      + '<button id="cancel" style="width: 100px;display: inline-block;">取消</button>'
+      + '</ul>';
+  }
+
+  var infoWindow = new BMap.InfoWindow(sContent); //创建信息窗口对象
+  thisMarker.addEventListener('infowindowclose', function (event) {
+    clearInterval(global.refreshMarker);
+
+  })
+  thisMarker.openInfoWindow(infoWindow); //图片加载完后重绘infoWindow
+  // getVideo();
+}
+
+function configFormData(appkey, senderID, receiverID, msgtype, msg, groupID, commonKey) {
+  var jsonPkg = {
+    "commonKey": commonKey ? commonKey : '200',
+    "appKey": appkey ? appkey : '1',
+    "tag": "",
+    "option": "",
+    "priority": "1",
+    "timeStamp": "",
+    "arrivalTime": "",
+    "status": "-1",
+    "errorMsg": "something wrong",
+    "data": {
+      'senderID': senderID ? senderID : "1",
+      'receiverID': receiverID ? receiverID : "1",
+      'groupID': groupID ? groupID : "-1",
+      'gpsLatitude': "-1",
+      'gpsLongtitude': "-1",
+      'msgType': msgtype ? msgtype : "1",
+      'lastDialogID': "1",
+      'textMsg': msg ? msg : "",
+    }
+  }
+  $("form input.gdData").val(JSON.stringify(jsonPkg));
+  var fdata = new FormData($("form.post-helper")[0]);
+  return fdata;
+}
+
+function filtrageAlertEvent(data){
+  if(data!=null){
+    var listAlertEvent={};
+    for(var i=0;i<data.data.length;i++){
+      if(data.data[i].status==2){
+        listAlertEvent.push(data.data[i]);
+      }
+    }
+    if(listAlertEvent.length>0){
+      showNotice();
+    }
+  }
+    
+}
+
+function makeUpAlertEventUI(){
+  var EventDiv=""
+
+}
