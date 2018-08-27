@@ -1,0 +1,150 @@
+{
+  "sftp://192.168.0.160:22@root": {
+    "var": {
+      "www": {
+        "sites": {
+          "data-police.gudong": {
+            "pub": {
+              "index": {
+                "js": {
+                  "userModule.js": {
+                    "type": "-",
+                    "size": 1679,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "videoPlayback.js": {
+                    "type": "-",
+                    "size": 2258,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "home.js": {
+                    "type": "-",
+                    "size": 10858,
+                    "lmtime": 1535351029786,
+                    "modified": false
+                  },
+                  "eventTimer.js": {
+                    "type": "-",
+                    "size": 1058,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "login.js": {
+                    "type": "-",
+                    "size": 139,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "dialogPanel.js": {
+                    "type": "-",
+                    "size": 1624,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "videoCmd.js": {
+                    "type": "-",
+                    "size": 1679,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "ajaxPost.js": {
+                    "type": "-",
+                    "size": 1300,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "jquery.js": {
+                    "type": "l",
+                    "size": 53,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "gVersion.js": {
+                    "type": "l",
+                    "size": 55,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "html2canvas.min.js": {
+                    "type": "-",
+                    "size": 166138,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "sketchpad.min.js": {
+                    "type": "-",
+                    "size": 5538,
+                    "lmtime": 0,
+                    "modified": false
+                  }
+                },
+                "image": {},
+                "sliceA.mp4": {
+                  "type": "-",
+                  "size": 235887,
+                  "lmtime": 0,
+                  "modified": false
+                },
+                "css": {
+                  "videoPlayback.css": {
+                    "type": "-",
+                    "size": 504,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "home.css": {
+                    "type": "-",
+                    "size": 2434,
+                    "lmtime": 1535340010293,
+                    "modified": false
+                  },
+                  "dialogPanel.css": {
+                    "type": "-",
+                    "size": 114,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "sketchpad.css": {
+                    "type": "-",
+                    "size": 59,
+                    "lmtime": 0,
+                    "modified": false
+                  }
+                },
+                "html": {
+                  "login.html": {
+                    "type": "-",
+                    "size": 1086,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "homebackup.html": {
+                    "type": "-",
+                    "size": 1286,
+                    "lmtime": 0,
+                    "modified": false
+                  },
+                  "home.html": {
+                    "type": "-",
+                    "size": 9836,
+                    "lmtime": 1535339724087,
+                    "modified": false
+                  }
+                },
+                "home.js": {
+                  "type": "-",
+                  "size": 15143,
+                  "lmtime": 1535350544424,
+                  "modified": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$version": 1
+}

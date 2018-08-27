@@ -1,0 +1,142 @@
+body{
+  width: 100%;
+  height: 100%;
+  background-color: rgb(16, 25, 21) !important;
+}
+div.frame{
+  display: block;
+  clear: both;
+  float: none;
+  height: 950px;
+  width:  1900px;
+  color: #fff;
+}
+
+div.frame div.center,
+div.frame div.left,
+div.frame div.right{
+ float: left;
+ clear: none;
+ height: 100%;
+}
+
+div.frame div.left,
+div.frame div.right{
+ width: 25%;
+}
+
+div.frame div.center{
+ float: left;
+ clear: none;
+ width: 50%;
+}
+
+div.center div.map{
+ height: 60%;
+ margin: 0 5px;
+ background-color: #112e29;
+ border: 1px solid #1efec8;
+}
+div.center div.infoBox{
+ height: 40%;
+}
+
+div.infoBox div.infoLeft,
+div.infoBox div.infoRight{
+ float: left;
+ clear: none;
+ height: 98%;
+ width: 48%;
+ background-color: #112e29;
+ border: 1px solid #1efec8;
+ margin: 5px;
+}
+div.infoBox div.infoRight{
+ background-color: #112e29;
+ border: 1px solid #1efec8;
+}
+
+div.right div.rightUp{
+ height: 35%;
+ background-color: #112e29;
+ /* border: 1px solid #1efec8; */
+}
+
+div.right div.rightDown{
+ height: 65%;
+ background-color: #0f3830;
+ margin: 0 10px;
+}
+
+div.right {
+  border: 1px solid #1efec8;
+  background-color: #112e29;
+}
+
+div.left div.leftUp,
+div.left div.leftDown{
+ height: 50%;
+ background-color: #112e29;
+}
+
+div.left div.leftDown{
+ height: 50%;
+ background-color: #19403b;
+ border: 1px solid #1efec8;
+}
+
+b.mainClock{
+ display: block;
+ float: right;
+}
+
+/* div rightUP styles start here */
+div.rightUp #main-screen{
+  width: 470px !important;
+  height: 280px !important;
+}
+div.rightUp .button-group{
+  margin-top: 5px;
+}
+div.rightUp .video-helper-container{
+  text-align: center;
+  padding-top: 5px;
+}
+.padding-top-60px{
+  padding-top: 60px
+}
+.alert-border{
+  border: 2px solid red !important;
+}
+.warnning-border{
+  border: 2px solid yellow !important;
+}
+.fa-rotate-45 {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+/* div rightUP styles end here */
+
+/* div leftDown styles start here */
+div.leftDown #player0, #player1, #player2, #player3, #player4, #player5, #player6, #player7, #player8{
+  width: 150px !important;
+  height: 140px !important;
+}
+div.leftDown div.video-container {
+  padding:0px !important;
+}
+div.leftDown div.video-panel {
+  background-color: #ceeff5
+}
+.title-btn {
+  background-color: #0b473f;
+  border: 1px solid #1efec8;
+  color: #fff;
+}
+.send2main-btn {
+  display: none;
+}
+/* div leftDown styles end here */

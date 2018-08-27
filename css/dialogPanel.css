@@ -1,0 +1,9 @@
+div.dataBox input{
+ width: 100px;
+ font-size: 0.9em;
+}
+
+div.dataBox b{
+ font-weight: normal;
+ font-size: 0.8em;
+}

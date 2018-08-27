@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  login   
+-->
+
+<head>
+<meta charset="utf-8" />
+<title> login</title>
+<meta name="generator" content="Geany 1.31" />
+
+<link href="app/css/login.css"	rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="common/js/jquery.js" ></script>
+<script type="text/javascript" src="common/js/gVersion.js" ></script>
+
+<script type="text/javascript" src="common/js/gAjaxPost.js" ></script>
+<script type="text/javascript" src="common/js/gdLogin.js" ></script>
+<script type="text/javascript" src="app/js/login.js" ></script>
+
+
+
+</head>
+
+<body>
+
+
+<div class="dataBox" >
+  <div class="loginBox">
+    <div class="data">
+		 <input type="text" name="userName"  value="userName"  class="cmd userName"/> <b>userName</b> <br/>
+		 <input type="text" name="password"  value="password"  class="cmd password"/> <b>password</b> <br/>
+    </div>	
+  </div>	
+</div>
+
+<button class="btnLogin"  data-url="jsonGateway.php" >login</button>
+
+<!-----------
+<form class="virtualForm" method="post" action="userModule.html"></form>
+----------------->
+</body>
+
+</html>

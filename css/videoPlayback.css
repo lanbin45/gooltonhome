@@ -1,0 +1,38 @@
+  video {
+	  display: block;	  
+	  width: 640px;
+	  height: 400px;
+  }
+  
+  video.aBuff{
+	  display: block;	  
+  }
+	  
+  video.bBuff{
+	  display: none;	  
+  }
+	  
+  div.sceneList a,
+  div.dateList a{
+    display: block;
+    float: none;
+  }
+  
+  div.videoSrc,
+  button.submitForm,
+  div.reqVideo{
+    display: none;
+  }
+  
+  div.displayBox div.dateList,
+  div.displayBox div.sceneList{
+    display: block;
+    float: left;
+    width: 35%;
+  }
+  
+  div.displayBox div.sceneList{
+    width: 60%;
+  }
+  
+  

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  home
+-->
+
+<head>
+  <meta charset="utf-8" />
+  <title> home </title>
+  <meta name="generator" content="Geany 1.31" />
+
+  <link href="../css/home.css" rel="stylesheet" type="text/css" />
+  <!-- font awesome -->
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <!-- <link href="common/zhang/Menu.css" rel="stylesheet" type="text/css" /> -->
+
+  <script type="text/javascript" src="../../common/js/jquery.js"></script>
+  <script type="text/javascript" src="../../common/js/gdLogout.js"></script>
+  <script type="text/javascript" src="../../common/js/gdEventTimer.js"></script>
+  <!-- <script type="text/javascript" src="common/zhang/Menu.js"></script> -->
+
+  <script type="text/javascript" src="../../common/js/gAjaxPost.js"></script>
+  <script type="text/javascript" src="../js/home.js"></script>
+
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+  <!-- <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script> -->
+  <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <!-- 播放器 -->
+  <script type="text/javascript" src="https://cdn.bdstatic.com/jwplayer/latest/cyberplayer.js" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="../../common/js/gVersion.js"></script>
+  <script type="text/javascript" src="../../common/js/gAjaxPost.js"></script>
+  <!-- sketchPad.js -->
+  <link href="../css/sketchpad.css" rel="stylesheet">
+  <script src="../js/sketchpad.min.js"></script>
+</head>
+
+<body>
+  <div class="frame">
+    <div class="left">
+      <div class="leftUp">Real time traffic</div>
+      <div class="leftDown container">
+        <div style="text-align: center;padding: 5px">
+          <button type="button" class="title-btn">北京实时交通监控</button>
+        </div>
+        <div class="video-panel">
+          <div class="row video-panel">
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player0-button">用户名</button> -->
+              <div id="player0"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+              <button type="button" class="title-btn send2main-btn" id="player0-send2main-btn" onclick="sendToMainScreen(0)">发到大屏幕</button>
+            </div> -->
+            </div>
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player1-button">用户名</button> -->
+              <div id="player1"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player1-send2main-btn" onclick="sendToMainScreen(1)">发到大屏幕</button>
+              </div> -->
+            </div>
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player2-button">用户名</button> -->
+              <div id="player2"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player2-send2main-btn" onclick="sendToMainScreen(2)">发到大屏幕</button>
+              </div> -->
+            </div>
+          </div>
+          <div class="row video-panel">
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player0-button">用户名</button> -->
+              <div id="player3"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player3-send2main-btn" onclick="sendToMainScreen(3)">发到大屏幕</button>
+              </div> -->
+            </div>
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player1-button">用户名</button> -->
+              <div id="player4"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player4-send2main-btn" onclick="sendToMainScreen(4)">发到大屏幕</button>
+              </div> -->
+            </div>
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player2-button">用户名</button> -->
+              <div id="player5"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player5-send2main-btn" onclick="sendToMainScreen(5)">发到大屏幕</button>
+              </div> -->
+            </div>
+          </div>
+          <div class="row video-panel">
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player0-button">用户名</button> -->
+              <div id="player6"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player6-send2main-btn" onclick="sendToMainScreen(6)">发到大屏幕</button>
+              </div> -->
+            </div>
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player1-button">用户名</button> -->
+              <div id="player7"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player7-send2main-btn" onclick="sendToMainScreen(7)">发到大屏幕</button>
+              </div> -->
+            </div>
+            <div class="col-4 video-container">
+              <!-- <button type="button" class="btn btn-success" id="player2-button">用户名</button> -->
+              <div id="player8"></div>
+              <!-- <div style="text-align: center;padding: 5px">
+                <button type="button" class="title-btn send2main-btn" id="player8-send2main-btn" onclick="sendToMainScreen(8)">发到大屏幕</button>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="center">
+      <div class="map">
+        map
+      </div>
+      <div class="infoBox">
+        <div class="infoLeft">
+          infoLeft
+        </div>
+        <div class="infoRight">
+          infoRight
+        </div>
+
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="rightUp">
+        <div class="video-container">
+          <div id="main-screen"></div>
+          <div class="container">
+            <div class="video-helper-container">
+              <!-- <div class="btn-group col-6" role="group" aria-label="Basic example"> -->
+                <button type="button" class="title-btn" onclick="snapShot()"><i class="fa fa-camera"></i> </button>
+                <button type="button" class="title-btn" onclick="resetZoom()"><i class="fa fa-refresh"></i></button>
+              <!-- </div> -->
+              <!-- <div class="btn-group col-6" role="group" aria-label="Basic example"> -->
+                <button type="button" class="title-btn" onclick="zoomVideo('leftup')"><i class="fa fa-arrow-left fa-rotate-45"></i></button>
+                <button type="button" class="title-btn" onclick="zoomVideo('leftdown')"><i class="fa fa-arrow-down fa-rotate-45"></i></button>
+                <button type="button" class="title-btn" onclick="zoomVideo('rightup')"><i class="fa fa-arrow-up fa-rotate-45"></i></button>
+                <button type="button" class="title-btn" onclick="zoomVideo('rightdown')"><i class="fa fa-arrow-right fa-rotate-45"></i></button>
+              <!-- </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title" id="myModalLabel">视频截图编辑</h4>
+            </div>
+            <div class="modal-body">
+              <!-- <img id="screenshot"> -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+              <button type="button" class="btn btn-primary" onclick="handleSubmit()">发送</button>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal -->
+      </div>
+      <form action="" id="formdataHelper" hidden="true" enctype="multipart/form-data" name="on-my-way" method="post">
+        <input type="" name="gdData" value="" class="gdData" />
+      </form>
+      <div class="rightDown"></div>
+    </div>
+    <!-- <div class="rightDown">team members info</div> -->
+  </div>
+
+  <div class="mainMenuBar">
+    <a href="#" class="btnLogout">logout</a>
+    <b class="mainClock">--</b>
+  </div>
+
+</body>
+
+<div class="_gdData" data-user-id="{userID}" data-session-id="{sessionID}" style="display: none">-----</div>
+
+</html>
