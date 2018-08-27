@@ -8,7 +8,7 @@ $(document).ready(function() {
   console.log("loaded");
   initRightupRegion()
   initRightDownRegion()
-  // chat branch test
+  // zhang branch test
 });
 
 /* div rightDown js start here */
