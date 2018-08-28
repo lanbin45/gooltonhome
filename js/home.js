@@ -1,10 +1,10 @@
-$(document).ready(function() {  
+$(document).ready(function () {
   gAjaxPost.init();
   gdLogout.init();
-  
+
   gdEventTimer.init();
-  gdEventTimer.startTimer(); 
-  $("div.infoLeft").html("update this panel"); 
+  gdEventTimer.startTimer();
+  $("div.infoLeft").html("update this panel");
   console.log("loaded");
   initRightupRegion()
   initRightDownRegion()
@@ -14,174 +14,205 @@ $(document).ready(function() {
 
 /* div rightDown js start here */
 function initRightDownRegion() {
-  var sign = true
-  // gdEventTimer.addEvent('getFriendList', '1', '.Friend')
-  // gdEventTimer.startTimer()
-  // $(".Friend").on('getFriendList', function () {
-  //   lunxun()
-  // })
-  $(".test-getfl").on('click', function () {
-      lunxun()
-  })
   gAjaxPost.personalInformation = null,
-      gAjaxPost.lasttimeFriend = [],
-      gAjaxPost.currFriend = [],
-      gAjaxPostlastDialogID = 0,    //上一次发过来的数据的最后的dialogID
-      gAjaxPost.currChatFriendID = null,
-      gAjaxPost.friendList = function (response, parent) {
-          gAjaxPost.personalInformation = JSON.parse(response)['data']
-          kk = JSON.parse(response)
-          gAjaxPost.currFriend = []
-          for (var i = 0; i < kk['data'].length; i++) {
-              gAjaxPost.currFriend[i] = parseInt(kk['data'][i]['userID'])
-          }
-          //remove friend offline
-          for (var i = 0; i < gAjaxPost.lasttimeFriend.length; i++) {
-              if (gAjaxPost.currFriend.indexOf(gAjaxPost.lasttimeFriend[i]) == -1) {
-                  $("#" + gAjaxPost.lasttimeFriend[i]).remove()					//delete friend off line
-              }
-          }
-
-          for (var i = 0; i < gAjaxPost.currFriend.length; i++) { //add friend new online
-              if (gAjaxPost.lasttimeFriend.indexOf(gAjaxPost.currFriend[i]) == -1) {
-                  var agentlist = gAjaxPost.currFriend
-
-                  var childdiv = $('<div></div>');   // create div node
-                  //var b='child'+i;              
-                  childdiv.attr('id', '' + gAjaxPost.currFriend[i]);          //set id                     //set css style
-                  childdiv.attr('class', 'forclick')
-                  childdiv.attr('data-chat', '[' + ']')   //set data-chat
-                  parentdiv = parent
-                  parentdiv.append(childdiv)
-                  if (parseInt($('._gdData').data('user-id')) == gAjaxPost.currFriend[i]) {
-                      $('#' + gAjaxPost.currFriend[i]).html(kk['data'][i]['userName'] + '                   ME')  //sign of me
-                  } else {
-                      $('#' + gAjaxPost.currFriend[i]).html(kk['data'][i]['userName']);
-                  }
-                  $('#' + gAjaxPost.currFriend[i]).css({ "padding": "10px 5px", "border-style": "solid", "border-width": "5px", "background-color": "#0b473f", "border": "1px solid #1efec8", "width": "30%", "height": "5%", "margin": "5px 0px 0px 0px" })
-                  // myvideo.play()
-                  //$("#onlinesound").play()
-              }
-          }
-
-          gAjaxPost.lasttimeFriend = [].concat(gAjaxPost.currFriend)
-          lunxunChatData()
-      }
-  gAjaxPost.receiveChatData = function (response) {                    //应将data-chat初始化，然后往里动态添加
-      var a = JSON.parse(response);
-      if (a['data'].length != 0) {
-          var M = a['data'].length;
-          for (var i = 0; i < a['data'].length; i++) {   //轮询每条收到的数据   
-              var index = gAjaxPost.currFriend.indexOf(parseInt(a['data'][i]['senderID']))
-              if (index != -1) {
-                  $('#' + gAjaxPost.currFriend[index]).data('chat').push(a['data'][i])
-              }//实时往聊天对话框加信息
-              if (a['data'][i]['senderID'] == gAjaxPost.currChatFriendID) {
-                  var childdiv = $("<div></div>")
-                  var timestamp = (new Date()).getTime();
-                  var b = 'div_' + timestamp;
-                  childdiv.attr('id', b);
-                  var parentdiv = $('.div1_0')
-                  parentdiv.append(childdiv)
-                  parentdiv.append($('<br />'))
-                  $("#" + b).html(a['data'][i]['textMsg'])
-              }
-          }
-          gAjaxPost.lastDialogID = parseInt(a['data'][M - 1]['dialogID'])
-          console.log(gAjaxPost.lastDialogID)
-      }
-  }
-  gAjaxPost.chatRecord = function (a) {
-      $("#lc-chatBox").empty()
-      gAjaxPost.currChatFriendID = $(a).attr("id");      //获取当前联系人的ID
-      var read = $('#' + gAjaxPost.currChatFriendID).data('chat');	//read chat record
-      console.log(read)
-      if (read.length != 0) {                                //为空并不是undefined
-          for (var i = 0; i < read.length; i++) {
-              var childdiv = $('<div></div>'); //creat div
-              var b = 'div_' + i;
-              childdiv.attr('id', b);
-              parentdiv = $('#lc-chatBox');
-              parentdiv.append(childdiv)
-              parentdiv.append($('<br />'))
-              $('#' + b).html(read[i]['textMsg']);
-              if (read[i]['senderID'] == $('._gdData').data('user-id')) {
-                  $("#" + b).css({ "position": "absolute", "right": "10px" })
-              }
-          }
-      }
-  }
-  gAjaxPost.sendMsg = function () {
-      var sendMsg = {						//发送消息
-          "commonKey": "100",
-          "appKey": "4",
-          "sessionID": $('._gdData').data('session-id'),
-          "data": {
-              // "senderID": "15",
-              "senderID": $('._gdData').data('user-id'),
-              "receiverID": gAjaxPost.currChatFriendID,
-              "groupID": "groupID",
-              "msgType": "1",
-              "textMsg": $("#lc-wordinput").val(),
-              "lastDialogID": gAjaxPost.lastDialogID,
-              "contentType": "1",
-          }
-      }
-      gAjaxPost.postOut("jsonGateway.php", JSON.stringify(sendMsg), $("sendMSG"))//这里没有将响应做处理
-      $("#" + gAjaxPost.currChatFriendID).data('chat').push(sendMsg['data'])
-      var childdiv = $('<div></div>'); //creat div
-      var timestamp = (new Date()).getTime();
-      var b = 'div_' + timestamp;
-      childdiv.attr('id', b);
-      parentdiv = $('.div1_0');
-      parentdiv.append(childdiv)
-      parentdiv.append($('<br />'))
-      $("#" + b).html(sendMsg['data']['textMsg'])
-      $("#" + b).css({ "position": "absolute", "right": "10px" })
-  }
+    gAjaxPost.lasttimeFriend = [],
+    gAjaxPost.currFriend = [],
+    gAjaxPost.lastDialogID = 0,    //上一次发过来的数据的最后的dialogID
+    gAjaxPost.currChatFriendID = null,
+    // gdEventTimer.addEvent('getFriendList', '1', '.Friend')
+    // gdEventTimer.startTimer()
+    // $(".Friend").on('getFriendList', function () {
+    //   lunxun()
+    // })
+    $(".test-getfl").on('click', function () {
+      lunxun()
+      //lunxunChatData()
+    })
   //gAjaxPost.chatRecord() //query chatrecord
 
   $('.Friend').on('mouseover', '.forclick', function (event) { //mouseover display personal information 
-      //send msg
-      for (var i = 0; i < gAjaxPost.personalInformation.length; i++)
-          if ($(this).attr('id') == gAjaxPost.personalInformation[i]['userID']) {		 //get id
-              $(this).attr('title', '账号' + ':' + gAjaxPost.personalInformation[i]['userID'] + '----' + 'userName' + ':' + gAjaxPost.personalInformation[i]['userName'])
-          }
+    //send msg
+    for (var i = 0; i < gAjaxPost.personalInformation.length; i++)
+      if ($(this).attr('id') == gAjaxPost.personalInformation[i]['userID']) {		 //get id
+        $(this).attr('title', '账号' + ':' + gAjaxPost.personalInformation[i]['userID'] + '----' + 'userName' + ':' + gAjaxPost.personalInformation[i]['userName'])
+      }
   })
 
   $('.Friend').on('click', '.forclick', function (event) {
-      var name = $("this").html()
-      $('#lc-policeName').html(name)
-      var a = this
-      popUpChatPage()
-      gAjaxPost.chatRecord(a)
+    var name = $(this).html()
+    $('#lc-policeName').html(name)
+    var a = this
+    popUpChatPage()
+    chatRecord(a)
   })
-  $("#sendMSG").click(function () {
-      gAjaxPost.sendMsg()
+  $("button#lc-sendMsg").click(function () {
+    sendMsg()
   })
 }
 
+function postOut_1(url, package, origin) {  // package is a json string, origin is the object who initial the post, and receive the reponse event
+  var json = { gdData: gAjaxPost.finalPack(package) };  // build data for post
+
+  //var origin1 = $(origin);    // make it jquery style
+
+  $.post(
+    url,   // url
+    json,                            // data
+    function (response, status, xhr) {                     // success, 
+      origin.trigger('postResponse', response);	  // return result by event postResponse
+    });
+
+}// postOut
+function friendList(response, parent) {
+  gAjaxPost.personalInformation = JSON.parse(response)['data']
+  kk = JSON.parse(response)
+  gAjaxPost.currFriend = []
+  for (var i = 0; i < kk['data'].length; i++) {
+    gAjaxPost.currFriend[i] = parseInt(kk['data'][i]['userID'])
+  }
+  //remove friend offline
+  for (var i = 0; i < gAjaxPost.lasttimeFriend.length; i++) {
+    if (gAjaxPost.currFriend.indexOf(gAjaxPost.lasttimeFriend[i]) == -1) {
+      $("#" + gAjaxPost.lasttimeFriend[i]).remove()					//delete friend off line
+    }
+  }
+
+  for (var i = 0; i < gAjaxPost.currFriend.length; i++) { //add friend new online
+    if (gAjaxPost.lasttimeFriend.indexOf(gAjaxPost.currFriend[i]) == -1) {
+      var agentlist = gAjaxPost.currFriend
+
+      var childdiv = $('<div></div>');   // create div node
+      //var b='child'+i;              
+      childdiv.attr('id', '' + gAjaxPost.currFriend[i]);          //set id                     //set css style
+      childdiv.attr('class', 'forclick')
+      childdiv.attr('data-chat', '[' + ']')   //set data-chat
+      parentdiv = parent
+      parentdiv.append(childdiv)
+      if (parseInt($('._gdData').data('user-id')) == gAjaxPost.currFriend[i]) {
+        $('#' + gAjaxPost.currFriend[i]).html(kk['data'][i]['userName'] + '                   ME')  //sign of me
+      } else {
+        $('#' + gAjaxPost.currFriend[i]).html(kk['data'][i]['userName']);
+      }
+      $('#' + gAjaxPost.currFriend[i]).css({ "padding": "10px 5px", "border-style": "solid", "border-width": "5px", "background-color": "#0b473f", "border": "1px solid #1efec8", "width": "30%", "height": "5%", "margin": "5px 0px 0px 0px" })
+      // myvideo.play()
+      //$("#onlinesound").play()
+    }
+  }
+
+  gAjaxPost.lasttimeFriend = [].concat(gAjaxPost.currFriend)
+  lunxunChatData()
+}
+function receiveChatData(response) {                    //应将data-chat初始化，然后往里动态添加
+  var a = JSON.parse(response);
+  if (a['data'].length != 0) {
+    var M = a['data'].length;
+    for (var i = 0; i < a['data'].length; i++) {   //轮询每条收到的数据   
+      var index = gAjaxPost.currFriend.indexOf(parseInt(a['data'][i]['senderID']))
+      if (index != -1) {
+        $('#' + gAjaxPost.currFriend[index]).data('chat').push(a['data'][i])
+      }//实时往聊天对话框加信息
+      if (a['data'][i]['senderID'] == gAjaxPost.currChatFriendID) {
+        var childdiv = $("<div></div>")
+        var timestamp = (new Date()).getTime();
+        var b = 'div_' + timestamp;
+        childdiv.attr('id', b);
+        var parentdiv = $('div#lc-chatBox')
+        parentdiv.append(childdiv)
+        parentdiv.append($('<br />'))
+        $("#" + b).html(a['data'][i]['textMsg'])
+      }
+    }
+    gAjaxPost.lastDialogID = parseInt(a['data'][M - 1]['dialogID'])
+    console.log(gAjaxPost.lastDialogID)
+  }
+}
+function chatRecord(a) {
+  $("#lc-chatBox").empty()
+  $("#lc-wordinput").val("")
+  gAjaxPost.currChatFriendID = $(a).attr("id");      //获取当前联系人的ID
+  var read = $('#' + gAjaxPost.currChatFriendID).data('chat');	//read chat record
+  console.log(read)
+  if (read.length != 0) {                                //为空并不是undefined
+    for (var i = 0; i < read.length; i++) {
+      var childdiv = $('<div></div>'); //creat div
+      var b = 'div_' + i;
+      childdiv.attr('id', b);
+      parentdiv = $('#lc-chatBox');
+      parentdiv.append(childdiv)
+      parentdiv.append($('<br />'))
+      $('#' + b).html(read[i]['textMsg']);
+      if (read[i]['senderID'] == $('._gdData').data('user-id')) {
+        $("#" + b).css({ "float": "right" })
+      }
+    }
+  }
+  $("#lc-chatBox").scrollTop(1000)           //滚动条到最底部
+}
+function chatboxscroll() {
+  var divscroll = document.getElementById('lc-chatBox')
+  var wholeHeight = divscroll.scrollHeight;
+  var scrollTop = divscroll.scrollTop;
+  var divHeight = divscroll.clientHeight;
+  if (scrollTop + divHeight >= wholeHeight) {
+    alert('滚动到底部了！');
+    //这里写动态加载的逻辑，比如Ajax请求后端返回下一个页面的内容
+  }
+  if (scrollTop == 0) {
+    alert('滚动到头部了！');
+  }
+}
+function sendMsg() {
+  var sendMsg = {						//发送消息
+    "commonKey": "100",
+    "appKey": "4",
+    "sessionID": $('._gdData').data('session-id'),
+    "data": {
+      "senderID": "15",
+      //"senderID": $('._gdData').data('user-id'),
+      "receiverID": gAjaxPost.currChatFriendID,
+      "groupID": "groupID",
+      "msgType": "1",
+      "textMsg": $("#lc-wordinput").val(),
+      "lastDialogID": gAjaxPost.lastDialogID,
+      "contentType": "1",
+    }
+  }
+  // gAjaxPost.postOut_1("../../jsonGateway.php", JSON.stringify(sendMsg), $("#sendMSG"))//这里没有将响应做处理
+  gAjaxPost.aysncPost("../../jsonGateway.php", JSON.stringify(sendMsg), function (response) {
+    console.log('message send success' + response)
+  })
+  $("#" + gAjaxPost.currChatFriendID).data('chat').push(sendMsg['data'])
+  var childdiv = $('<div></div>'); //creat div
+  var timestamp = (new Date()).getTime();
+  var b = 'div_' + timestamp;
+  childdiv.attr('id', b);
+  parentdiv = $('#lc-chatBox');
+  parentdiv.append(childdiv)
+  parentdiv.append($('<br />'))
+  $("#" + b).html(sendMsg['data']['textMsg'])
+  $("#" + b).css({ "float": "right" })
+}
 function popUpChatPage() {
   openChatPage()
   var offsetX = 0;
   var offsetY = 0;
   var bool = false;
   $("div#lc-chatPage").mousedown(function () {
-      bool = true;
-      offsetX = event.offsetX;
-      offsetY = event.offsetY;
-      $("#lc-close-chatPage").css('cursor', 'move');
+    bool = true;
+    offsetX = event.offsetX;
+    offsetY = event.offsetY;
+    $("#lc-close-chatPage").css('cursor', 'move');
   })
   $("div#lc-chatPage").mouseup(function () {
-      bool = false;
+    bool = false;
   })
   $(document).mousemove(function (e) {
-      if (!bool)
-          return;
-      var x = event.clientX - offsetX;
-      var y = event.clientY - offsetY;
-      $("div#lc-chatPage").css("left", x);
-      $("div#lc-chatPage").css("top", y);
+    if (!bool)
+      return;
+    var x = event.clientX - offsetX;
+    var y = event.clientY - offsetY;
+    $("div#lc-chatPage").css("left", x);
+    $("div#lc-chatPage").css("top", y);
   })
 }
 function openChatPage() {
@@ -192,45 +223,53 @@ function closeChatPage() {
 }
 function onclickOnlinePolice() {
   if ($('.forclick').is(':visible')) {
-      $('.forclick').css({ "display": "none" })
+    $('.forclick').css({ "display": "none" })
   } else {
-      $('.forclick').css({ "display": "block" })
+    $('.forclick').css({ "display": "block" })
   }
   //控制div的显示
 }
 function lunxun() {
-  var url_1 = "jsonGateway.php"
+  var url_1 = "../../jsonGateway.php"
   var jsondata = {
-      "commonKey": "100",
-      "appKey": "1",
-      //"sessionID": $('._gdData').data('session-id'),
-      "data": {
-          // "senderID": $('._gdData').data('user-id')
-          "senderID": "15"
-      }
+    "commonKey": "100",
+    "appKey": "1",
+    //"sessionID": $('._gdData').data('session-id'),
+    "data": {
+      // "senderID": $('._gdData').data('user-id')
+      "senderID": "15"
+    }
   }
-  gAjaxPost.postOut(url_1, JSON.stringify(jsondata), $('.Friend'))
-  $(".Friend").one("postResponse", function (event, response) {
-      gAjaxPost.friendList(response, $(".Friend"))
+  gAjaxPost.aysncPost(url_1, JSON.stringify(jsondata), function (response) {
+    friendList(response, $(".Friend"))
   })
+  // postOut_1(url_1, JSON.stringify(jsondata), $('.Friend'))
+  // $(".Friend").one("postResponse", function (event, response) {
+  //   friendList(response, $(".Friend"))
+  // })
 }
 function lunxunChatData() {
   var jsondata = {
-      "commonKey": "100",
-      "appKey": "3",
-      "sessionID": $('._gdData').data('session-id'),
-      "data": {
-          // "senderID": $('._gdData').data('user-id'),
-          "senderID": "15",
-          "lastDialogID": gAjaxPost.lastDialogID
-      }
+    "commonKey": "100",
+    "appKey": "3",
+    "sessionID": $('._gdData').data('session-id'),
+    "data": {
+      // "senderID": $('._gdData').data('user-id'),
+      "senderID": "15",
+      "lastDialogID": gAjaxPost.lastDialogID
+    }
   }
-  gAjaxPost.postOut("jsonGateway.php", JSON.stringify(jsondata), $(".right")) //friendbox随便绑定的
-  $(".right").one("postResponse", function (event, data) {
-      var a = JSON.parse(data);
-      console.log(a['appKey'] + "-------------------" + a['data'].length + "--------------")
-      gAjaxPost.receiveChatData(data)
+  gAjaxPost.aysncPost("../../jsonGateway.php", JSON.stringify(jsondata), function (response) {
+    var a = JSON.parse(response);
+    console.log(a['appKey'] + "-------------------" + a['data'].length + "--------------")
+    receiveChatData(response)
   })
+  // postOut_1("../../jsonGateway.php", JSON.stringify(jsondata), $(".right")) //friendbox随便绑定的
+  // $(".right").one("postResponse", function (event, data) {
+  //   var a = JSON.parse(data);
+  //   console.log(a['appKey'] + "-------------------" + a['data'].length + "--------------")
+  //   receiveChatData(data)
+  // })
 }
 
 
@@ -238,23 +277,23 @@ function lunxunChatData() {
 
 /** added by lb ----start----- */
 function initRightupRegion() {
-  gAjaxPost.aysncPost = function(url, package, callback){
-    var json={gdData:gAjaxPost.finalPack(package)};
+  gAjaxPost.aysncPost = function (url, package, callback) {
+    var json = { gdData: gAjaxPost.finalPack(package) };
     $.post(
       url,   // url
       json,                            // data
-      function(response,status, xhr){                     // success, 
+      function (response, status, xhr) {                     // success, 
         callback(response)	  // return result by event postResponse
-    });
+      });
   }
-  gAjaxPost.aysncPostFormData = function(url, formData, callback){   // formData is FormData object
-     $.ajax({
+  gAjaxPost.aysncPostFormData = function (url, formData, callback) {   // formData is FormData object
+    $.ajax({
       url: url,
       type: "POST",
-        processData: false, 
-        contentType: false, 
+      processData: false,
+      contentType: false,
       data: formData,
-      success: function(response,status, xhr){
+      success: function (response, status, xhr) {
         callback(response)  // return result by event postResponse
       }
     });
@@ -268,7 +307,7 @@ function initRightupRegion() {
     stretching: "uniform",
     volume: 100,
     controls: false,
-    rtmp: {        
+    rtmp: {
       reconnecttime: 5, // rtmp直播的重连次数
       bufferlength: 1 // 缓冲多少秒之后开始播放 默认1秒         
     },
@@ -295,7 +334,7 @@ function getOnlineUsers() {
     data: {},
     sessionID: 'sessionID'
   }
-  gAjaxPost.aysncPost('../../jsonGateway.php',JSON.stringify(jsonPkg), function(response){
+  gAjaxPost.aysncPost('../../jsonGateway.php', JSON.stringify(jsonPkg), function (response) {
     var users = JSON.parse(response).data;
     var mainUrl = getDefaultMainUrl(users)
     if (!RightUp.mainPlayer || RightUp.mainUrl != mainUrl) {
@@ -309,7 +348,7 @@ function getOnlineUsers() {
 
 function maintainUserList(users) {
   var notPlaying = [];
-  var availablePlayer = ['player0', 'player1', 'player2', 'player3', 'player4', 'player5', 'player6', 'player7','player8']
+  var availablePlayer = ['player0', 'player1', 'player2', 'player3', 'player4', 'player5', 'player6', 'player7', 'player8']
   users.forEach(function (user, index) {
     if (user.sceneID) {
       var url = RightUp.rtmpBaseUrl + user.userID + 'AAA' + user.sceneID
@@ -318,13 +357,13 @@ function maintainUserList(users) {
         notPlaying.push(user)
       } else {
         availablePlayer.splice(availablePlayer.indexOf('player' + index), 1)
-        updatePlayerStatus('player'+index, user.status)
+        updatePlayerStatus('player' + index, user.status)
       }
     }
   })
   if (availablePlayer.length > 0 && notPlaying.length > 0) {
     availablePlayer.forEach(function (player, index) {
-      if(index < notPlaying.length) {
+      if (index < notPlaying.length) {
         updatePlayerStatus(player, notPlaying[index].status)
         if (notPlaying[index] && notPlaying[index].userID) {
           var url = RightUp.rtmpBaseUrl + notPlaying[index].userID + 'AAA' + notPlaying[index].sceneID
@@ -337,17 +376,17 @@ function maintainUserList(users) {
 }
 
 function updatePlayerStatus(player, status) {
-  if(Number(status) == 2) {
-    $('#'+player).parent().removeClass('warnning-border')
-    $('#'+player).parent().addClass('alert-border')
-  } else if(Number(status) == 3){
-    $('#'+player).parent().removeClass('alert-border')
-    $('#'+player).parent().addClass('warnning-border')
+  if (Number(status) == 2) {
+    $('#' + player).parent().removeClass('warnning-border')
+    $('#' + player).parent().addClass('alert-border')
+  } else if (Number(status) == 3) {
+    $('#' + player).parent().removeClass('alert-border')
+    $('#' + player).parent().addClass('warnning-border')
   } else {
-    $('#'+player).parent().removeClass('alert-border')
-    $('#'+player).parent().removeClass('warnning-border')
+    $('#' + player).parent().removeClass('alert-border')
+    $('#' + player).parent().removeClass('warnning-border')
   }
-  $('#'+player+'-send2main-btn').show()
+  $('#' + player + '-send2main-btn').show()
 }
 
 function whichPlaying(url) {
@@ -364,14 +403,14 @@ function whichPlaying(url) {
 function getDefaultMainUrl(users) {
   var params = getRequestParams();
   var mainUrl = RightUp.mainUrl;
- if(!mainUrl) {
-   for (var i = 0; i < users.length; i++) {
-     if (users[i].sceneID) {
-       mainUrl = RightUp.rtmpBaseUrl + users[i].userID + 'AAA' + users[i].sceneID
-       break
-     }
-   }
- }
+  if (!mainUrl) {
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].sceneID) {
+        mainUrl = RightUp.rtmpBaseUrl + users[i].userID + 'AAA' + users[i].sceneID
+        break
+      }
+    }
+  }
   return params.mainUrl ? params.mainUrl : mainUrl; // 默认显示streamId=1的图像
 }
 
@@ -413,13 +452,13 @@ function attachToSpecificPlayer(player, url, userName, status) {
     var cplayer = cyberplayer(player).setup(basePlayerConfig)
     RightUp[player] = cplayer
   }
-  $('#'+player+'-button').text(userName)
+  $('#' + player + '-button').text(userName)
   // RightUp[player].onSeek(function(event){ 
   //   console.log('ready')
   //   // console.log($('#'+player/* + ' .jw-media' */)[0])
   //   $('#'+player)[0].bind('click',sendToMainScreen(1))
   // });
-  RightUp[player].on('displayClick',function(){
+  RightUp[player].on('displayClick', function () {
     console.log('target')
     sendToMainScreen(player)
   })
@@ -462,19 +501,19 @@ function sendToMainScreen(player) {
 function snapShot() {
   $.get('http://192.168.0.160:8000/api/snapshot', {
     url: RightUp.mainUrl
-  }, function(response, status, xhr) {
+  }, function (response, status, xhr) {
     console.log(response)
     var baseUrl = 'http://192.168.0.160:8000/'
     var myImage = new Image();
     myImage.crossOrigin = "Anonymous";
-    
-    myImage.onload = function() {
+
+    myImage.onload = function () {
       var imgWidth = myImage.width;
       var imgHeight = myImage.height;
       var $canvas = $('#canvasDemo')
-      if($canvas.length == 0){
+      if ($canvas.length == 0) {
         $canvas = $(`<canvas id="canvasDemo" width="${imgWidth}" height="${imgHeight}"></canvas>`)
-        $('#myModal .modal-body').append($canvas)        
+        $('#myModal .modal-body').append($canvas)
       } else {
         $canvas.attr('width', imgWidth)
         $canvas.attr('height', imgHeight)
@@ -487,19 +526,19 @@ function snapShot() {
       sketchpad.color = '#BF0A10'
       var context = $('#canvasDemo')[0].getContext("2d");
       context.drawImage(myImage, 0, 0);
-      $('#myModal .modal-content').width(imgWidth+50)
-      $('.modal-dialog').css('margin-left', document.body.clientWidth/2 - imgWidth/2 -50)
+      $('#myModal .modal-content').width(imgWidth + 50)
+      $('.modal-dialog').css('margin-left', document.body.clientWidth / 2 - imgWidth / 2 - 50)
       $('#myModal').modal('show')
     }
-    myImage.src = baseUrl+response.imageUrl;
+    myImage.src = baseUrl + response.imageUrl;
   })
 }
 
-function handleSubmit () {
+function handleSubmit() {
   console.log('handleSubmit')
   canvas2blobPollyfill()
   var canvas = $('#canvasDemo')[0]
-  canvas.toBlob(function(blob) {
+  canvas.toBlob(function (blob) {
     var userId = getMainScreenUserId()
     var senderId = '1' // 从登陆信息中取，todo
     var jsonPkg = {
@@ -515,37 +554,37 @@ function handleSubmit () {
     $("#formdataHelper input.gdData").val(JSON.stringify(jsonPkg));
     var fd = new FormData($('#formdataHelper')[0]);
     fd.append('mediaFile', blob, 'image.png')
-    gAjaxPost.aysncPostFormData('../../jsonGateway.php', fd, function(res){
+    gAjaxPost.aysncPostFormData('../../jsonGateway.php', fd, function (res) {
       console.log(res)
       $('#myModal').modal('hide')
     })
   });
 }
 
-function canvas2blobPollyfill () {
+function canvas2blobPollyfill() {
   if (!HTMLCanvasElement.prototype.toBlob) {
     Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
-     value: function (callback, type, quality) {
-   
-       var binStr = atob( this.toDataURL(type, quality).split(',')[1] ),
-           len = binStr.length,
-           arr = new Uint8Array(len);
-   
-       for (var i=0; i<len; i++ ) {
-        arr[i] = binStr.charCodeAt(i);
-       }
-   
-       callback( new Blob( [arr], {type: type || 'image/png'} ) );
-     }
+      value: function (callback, type, quality) {
+
+        var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+          len = binStr.length,
+          arr = new Uint8Array(len);
+
+        for (var i = 0; i < len; i++) {
+          arr[i] = binStr.charCodeAt(i);
+        }
+
+        callback(new Blob([arr], { type: type || 'image/png' }));
+      }
     });
-   }
+  }
 }
 
 function getMainScreenUserId() {
   var userId;
-  if(RightUp.mainUrl){
+  if (RightUp.mainUrl) {
     var urlArray = RightUp.mainUrl.split('/')
-    return urlArray[urlArray.length-1].split('AAA')[0]
+    return urlArray[urlArray.length - 1].split('AAA')[0]
   }
   return 0
 }
@@ -556,10 +595,10 @@ function zoomVideo(region) {
   $.get('http://192.168.0.160:8000/api/zoom', {
     url: RightUp.mainUrl,
     region: region
-  }, function(response, status, xhr) {
+  }, function (response, status, xhr) {
     console.log(response)
-    if(!response.errormsg) {
-      RightUp.mainUrl = RightUp.mainUrl.split('zoomhelper')[0]+'zoomhelper'
+    if (!response.errormsg) {
+      RightUp.mainUrl = RightUp.mainUrl.split('zoomhelper')[0] + 'zoomhelper'
       attachToMainPlayer()
     }
   })
@@ -797,22 +836,22 @@ function configFormData(appkey, senderID, receiverID, msgtype, msg, groupID, com
   return fdata;
 }
 
-function filtrageAlertEvent(data){
-  if(data!=null){
-    var listAlertEvent={};
-    for(var i=0;i<data.data.length;i++){
-      if(data.data[i].status==2){
+function filtrageAlertEvent(data) {
+  if (data != null) {
+    var listAlertEvent = {};
+    for (var i = 0; i < data.data.length; i++) {
+      if (data.data[i].status == 2) {
         listAlertEvent.push(data.data[i]);
       }
     }
-    if(listAlertEvent.length>0){
+    if (listAlertEvent.length > 0) {
       showNotice();
     }
   }
-    
+
 }
 
-function makeUpAlertEventUI(){
-  var EventDiv=""
+function makeUpAlertEventUI() {
+  var EventDiv = ""
 
 }
