@@ -2,7 +2,7 @@
     "host": "192.168.0.160",
     "username": "root",
     "password": "gudong",
-    "remotePath": "/var/www/sites/data-police.gudong/pub/index/",
+    "remotePath": "/var/www/sites/data-police.gudong/pub/index1/",
     "protocol": "sftp",
     "port": 22,
     "fileNameEncoding": "utf8",
