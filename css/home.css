@@ -148,10 +148,10 @@ div.rightDown{
   overflow:auto;
   
 }
-div.policeList,div.lc-policeOnline,div.lc-group1,div.lc-group2,div.lc-unGroup{
+div.policeList,div.lc-policeOnline,div.lc-group1,div.lc-group2,div.lc-unGroup,div.lc-groupArea{
   margin-bottom: 8px;
 }
-p.policeList,button.lc-policeOnline,button.lc-group1,button.lc-group2,button.lc-unGroup{
+p.policeList,button.lc-policeOnline,button.lc-group1,button.lc-group2,button.lc-unGroup,button.lc-groupclick{
   background-color: #0b473f;
   border:1px solid #1efec8;
   color:#fff;

@@ -19,15 +19,16 @@ function initRightDownRegion() {
     gAjaxPost.currFriend = [],
     gAjaxPost.lastDialogID = 0,    //上一次发过来的数据的最后的dialogID
     gAjaxPost.currChatFriendID = null,
-     gdEventTimer.addEvent('getFriendList', '1', '.Friend')
-    gdEventTimer.startTimer()
-    $(".Friend").on('getFriendList', function () {
-      lunxun()
-    })
-    $(".test-getfl").on('click', function () {
-      lunxun()
-      //lunxunChatData()
-    })
+  //   gdEventTimer.addEvent('getFriendList', '1', '.Friend')
+  // gdEventTimer.startTimer()
+  $(".Friend").on('getFriendList', function () {
+    lunxun()
+  })
+  $(".test-getfl").on('click', function () {
+    //lunxun()
+    //lunxunChatData()
+    getGroupList()
+  })
   //gAjaxPost.chatRecord() //query chatrecord
 
   $('.Friend').on('mouseover', '.forclick', function (event) { //mouseover display personal information 
@@ -49,7 +50,29 @@ function initRightDownRegion() {
     sendMsg()
   })
 }
-
+function getGroupList() {
+  var jsondata = {
+    "commonKey": "403",
+    "appKey": "2",
+    //"sessionID": $('._gdData').data('session-id'),
+    "data": {
+      // "senderID": $('._gdData').data('user-id')
+      "senderID": "15"
+    }
+  }
+  gAjaxPost.aysncPost("../../jsonGateway.php", JSON.stringify(jsondata), function (response) {
+    displayGroupList(response)
+  })
+}
+function displayGroupList(response) {
+  var groupID = JSON.parse(response)['data']
+  for (var i = 0; groupID.length; i++) {
+    var childdiv='<div class="lc-groupArea"><button class="lc-groupclick" id="'+groupID[i]['groupID']+'"'+'></button></div>'
+    var parentdiv=$("div.rightDown")
+    parentdiv.append(childdiv)
+    $("#"+groupID[i]['groupID']).html(groupID[i]['groupName'])
+  }
+}
 function postOut_1(url, package, origin) {  // package is a json string, origin is the object who initial the post, and receive the reponse event
   var json = { gdData: gAjaxPost.finalPack(package) };  // build data for post
 
