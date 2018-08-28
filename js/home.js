@@ -146,7 +146,7 @@ function chatRecord(a) {
       }
     }
   }
-  $("#lc-chatBox").scrollTop(1000)           //滚动条到最底部
+  $("#lc-chatBox").scrollTop(1000)
 }
 function chatboxscroll() {
   var divscroll = document.getElementById('lc-chatBox')
