@@ -19,11 +19,11 @@ function initRightDownRegion() {
     gAjaxPost.currFriend = [],
     gAjaxPost.lastDialogID = 0,    //上一次发过来的数据的最后的dialogID
     gAjaxPost.currChatFriendID = null,
-    // gdEventTimer.addEvent('getFriendList', '1', '.Friend')
-    // gdEventTimer.startTimer()
-    // $(".Friend").on('getFriendList', function () {
-    //   lunxun()
-    // })
+     gdEventTimer.addEvent('getFriendList', '1', '.Friend')
+    gdEventTimer.startTimer()
+    $(".Friend").on('getFriendList', function () {
+      lunxun()
+    })
     $(".test-getfl").on('click', function () {
       lunxun()
       //lunxunChatData()
