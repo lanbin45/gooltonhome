@@ -17,8 +17,18 @@ function initRightDownRegion() {
   gAjaxPost.personalInformation = null,
     gAjaxPost.lasttimeFriend = [],
     gAjaxPost.currFriend = [],
+    // gAjaxPost.lastGroupID_userID = [],
+    // gAjaxPost.currGroupID_userID = [],
+    gAjaxPost.currGroupID = [],
+    gAjaxPost.lasttimeGroupID = [],
+    gAjaxPost.lasttime_selector =null,//event to remove
+    gAjaxPost.curr_selector = null,//event to add and start
+    gAjaxPost.lasttimeGroupMembers = [],
+    gAjaxPost.currGroupMembers = [],
     gAjaxPost.lastDialogID = 0,    //上一次发过来的数据的最后的dialogID
     gAjaxPost.currChatFriendID = null,
+    gAjaxPost.groupExistSign = true,
+    gAjaxPost.Interval=null,
   //   gdEventTimer.addEvent('getFriendList', '1', '.Friend')
   // gdEventTimer.startTimer()
   $(".Friend").on('getFriendList', function () {
@@ -49,6 +59,75 @@ function initRightDownRegion() {
   $("button#lc-sendMsg").click(function () {
     sendMsg()
   })
+  //listen groupclick event
+  $("div.rightDown").on('click', 'div.lc-groupArea button.lc-groupclick', function () {
+    // if (gAjaxPost.lasttime_selector.length == 0) {
+    //   gdEventTimer.addEvent('getGroupMembers', '1', this)
+    //   gdEventTimer.startTimer()
+    // } else {
+    //   //gAjaxPost.lasttimeGroupMembers.splice(0, gAjaxPost.lasttimeGroupMembers.length)
+    //   gdEventTimer.stopTimer()
+    //   gdEventTimer.removeEvent('getGroupMembers', '1', gAjaxPost.lasttime_selector)
+    //   gdEventTimer.addEvent('getGroupMembers', '1', this)
+    //   gdEventTimer.startTimer()
+    // }
+    // gdEventTimer.removeEvent('getGroupMembers', '1', gAjaxPost.lasttime_selector)
+    // gdEventTimer.addEvent('getGroupMembers', '1', this)
+    if(gAjaxPost.Interval!=null){
+      clearInterval(gAjaxPost.Interval)
+    }
+    
+    gAjaxPost.lasttime_selector = this
+    gAjaxPost.Interval=setInterval("ListenCurrGroupMembers("+gAjaxPost.lasttime_selector+")",1000);
+    //ListenCurrGroupMembers(this)
+  })
+
+}
+function clickGroupName() {
+  $("div.rightDown").on('click', 'div.lc-groupArea button.lc-groupclick', function () {
+    // if(gAjaxPost.groupExistSign==true){
+    gdEventTimer.addEvent('getGroupMembers', '1', 'div.rightDown')
+    gdEventTimer.startTimer()
+  })
+}
+function ListenCurrGroupMembers(select) {
+  $(select).on('getGroupMembers', function () {
+    var ID = $(this).attr('id')
+    groupID = ID.substr(11)
+    var jsondata = {
+      "commonKey": "403",
+      "appKey": "8",
+      "data": {
+        "groupID": groupID
+      }
+    }
+    gAjaxPost.aysncPost("../../jsonGateway.php", JSON.stringify(jsondata), function (response) {
+      addGroupMembers(response, groupID)
+    })
+  })
+}
+function addGroupMembers(response, groupID) {
+  var members = JSON.parse(response)['data']
+  gAjaxPost.currGroupMembers.splice(0, gAjaxPost.currGroupMembers.length)
+  for (var i = 0; i < members.length; i++) {
+    gAjaxPost.currGroupMembers[i] = members[i]['userID']
+  }
+  //remove gropuMembers offline
+  for (var i = 0; i < gAjaxPost.lasttimeGroupMembers.length; i++) {
+    if (gAjaxPost.currGroupMembers.indexOf(gAjaxPost.lasttimeGroupMembers[i]) == -1)
+      $("#group-userID" + groupID + '_' + gAjaxPost.lasttimeGroupMembers[i]).remove()
+  }
+  //add new members
+  for (var i = 0; i < gAjaxPost.currGroupMembers.length; i++) {
+    if (gAjaxPost.lasttimeGroupMembers.indexOf(gAjaxPost.currGroupMembers[i]) == -1) {
+      var childdiv = '<div class="groupMember forclick" id="group-userID' + groupID + '_' + gAjaxPost.currGroupMembers[i] + '"></div>'
+      var parentdiv = $('#divgroup' + groupID)
+      parentdiv.append(childdiv)
+      $('#group-userID' + groupID + '_' + gAjaxPost.currGroupMembers[i]).html(members[i]['userName'])
+    }
+  }
+  gAjaxPost.lasttimeGroupMembers.splice(0, gAjaxPost.lasttimeGroupMembers.length)
+  gAjaxPost.lasttimeGroupMembers = [].concat(gAjaxPost.currGroupMembers)
 }
 function getGroupList() {
   var jsondata = {
@@ -66,11 +145,51 @@ function getGroupList() {
 }
 function displayGroupList(response) {
   var groupID = JSON.parse(response)['data']
-  for (var i = 0; groupID.length; i++) {
-    var childdiv='<div class="lc-groupArea"><button class="lc-groupclick" id="'+groupID[i]['groupID']+'"'+'></button></div>'
-    var parentdiv=$("div.rightDown")
-    parentdiv.append(childdiv)
-    $("#"+groupID[i]['groupID']).html(groupID[i]['groupName'])
+  gAjaxPost.currGroupID.splice(0, gAjaxPost.currGroupID.length)
+  for (var i = 0; i < groupID.length; i++) {
+    gAjaxPost.currGroupID[i] = groupID[i]['groupID']
+  }
+
+  //add new groupmembers
+  for (var i = 0; i < gAjaxPost.currGroupID.length; i++) {
+    if (gAjaxPost.lasttimeGroupID.indexOf(gAjaxPost.currGroupID[i]) == -1) {
+      var childdiv = '<div class="lc-groupArea" id="divgroup' + groupID[i]['groupID'] + '"><button class="lc-groupclick" id="buttonGroup' + groupID[i]['groupID'] + '"' + '></button></div>'
+      var parentdiv = $("div.rightDown")
+      parentdiv.append(childdiv)
+      $("#buttonGroup" + groupID[i]['groupID']).html(groupID[i]['groupName'])
+    }
+  }
+  for (var i = 0; i < gAjaxPost.lasttimeGroupID.length; i++) {
+    if (gAjaxPost.currGroupID.indexOf(gAjaxPost.lasttimeGroupID[i]) == -1) {
+      $("#divgroup" + gAjaxPost.lasttimeGroupID[i]).remove()
+    }
+  }
+  gAjaxPost.lasttimeGroupID = [].concat(gAjaxPost.currGroupID)
+  //getUsersInGroup()  //向生成的群组名下添加成员
+}
+function getUsersInGroup() {
+  var jsondata = {
+    "commonKey": "403",
+    "appKey": "8",
+    "data": {
+      "groupID": "1"
+      // "senderID":$('._gdData').data('user-id')
+    }
+  }
+  for (var i = 0; i < gAjaxPost.currGroupID.length; i++) {
+    jsondata['data']['groupID'] = gAjaxPost.currGroupID[i]
+    // $.ajax({
+    //   url: "../../jsonGateway.php",
+    //   data: JSON.stringify(jsondata),
+    //   async: false,
+    //   contentType: "application/x-www-form-urlencoded",
+    //   success: function (response) {
+    //     addGroupMembers(response, gAjaxPost.currGroupID[i])
+    //   }
+    // })
+    gAjaxPost.aysncPost("../../jsonGateway.php", JSON.stringify(jsondata), function (response) {
+      addGroupMembers(response, gAjaxPost.currGroupID[i])
+    })
   }
 }
 function postOut_1(url, package, origin) {  // package is a json string, origin is the object who initial the post, and receive the reponse event
@@ -106,9 +225,9 @@ function friendList(response, parent) {
 
       var childdiv = $('<div></div>');   // create div node
       //var b='child'+i;              
-      childdiv.attr('id', '' + gAjaxPost.currFriend[i]);          //set id                     //set css style
+      childdiv.attr('id', gAjaxPost.currFriend[i]);          //set id                     //set css style
       childdiv.attr('class', 'forclick')
-      childdiv.attr('data-chat', '[' + ']')   //set data-chat
+      childdiv.attr('data-chat', '[]')   //set data-chat
       parentdiv = parent
       parentdiv.append(childdiv)
       if (parseInt($('._gdData').data('user-id')) == gAjaxPost.currFriend[i]) {
@@ -116,7 +235,8 @@ function friendList(response, parent) {
       } else {
         $('#' + gAjaxPost.currFriend[i]).html(kk['data'][i]['userName']);
       }
-      $('#' + gAjaxPost.currFriend[i]).css({ "padding": "10px 5px", "border-style": "solid", "border-width": "5px", "background-color": "#0b473f", "border": "1px solid #1efec8", "width": "30%", "height": "5%", "margin": "5px 0px 0px 0px" })
+      var myvideo = document.getElementById("onlinesound")    //add volice
+      myvideo.play()
       // myvideo.play()
       //$("#onlinesound").play()
     }
