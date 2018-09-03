@@ -29,8 +29,8 @@ function initRightDownRegion() {
     gAjaxPost.currChatFriendID = null,
     gAjaxPost.groupExistSign = true,
     gAjaxPost.Interval = null,
-      gdEventTimer.addEvent('getFriendList', '1', '.Friend')
-    gdEventTimer.startTimer()
+    //   gdEventTimer.addEvent('getFriendList', '1', '.Friend')
+    // gdEventTimer.startTimer()
     $(".Friend").on('getFriendList', function () {
       lunxun()
     })
@@ -74,7 +74,10 @@ function initRightDownRegion() {
     // gdEventTimer.removeEvent('getGroupMembers', '1', gAjaxPost.lasttime_selector)
     // gdEventTimer.addEvent('getGroupMembers', '1', this)
     gAjaxPost.curr_selector = this
-    if(gAjaxPost.lasttime_selector==null){
+    console.log(gAjaxPost.lasttime_selector)
+    
+    if (gAjaxPost.lasttime_selector == null) {
+
       gAjaxPost.lasttimeGroupMembers.splice(0, gAjaxPost.lasttimeGroupMembers.length)   //获取新的群组时，应先清空和上一次相关的群成员ID
       // gAjaxPost.Interval=setInterval("ListenCurrGroupMembers("+gAjaxPost.lasttime_selector+")",1000);
       gAjaxPost.Interval = self.setInterval(function () {
@@ -90,17 +93,21 @@ function initRightDownRegion() {
         gAjaxPost.aysncPost("../../jsonGateway.php", JSON.stringify(jsondata), function (response) {
           addGroupMembers(response, groupID)
         })
-      }, 1000);
-    }else if (gAjaxPost.lasttime_selector == gAjaxPost.curr_selector) {   //如果两次点击同一个群明，不设置新的定时器
+      }, 100);
+      console.log("the first time set timer")
+    } else if (gAjaxPost.lasttime_selector == gAjaxPost.curr_selector) {   //如果两次点击同一个群明，不设置新的定时器
       console.log("the same group")
     } else {
-      if (gAjaxPost.Interval != null) {         //排除第一次点击事件，gAjaxPost.Interval为空的情况
-        window.clearInterval(gAjaxPost.Interval)
-      }
+      window.clearInterval(gAjaxPost.Interval)
       var parentNode = $(gAjaxPost.lasttime_selector).parent()
       var content = $(gAjaxPost.lasttime_selector).html()
-      var id=$(gAjaxPost.lasttime_selector).attr('id')
+      var id = $(gAjaxPost.lasttime_selector).attr('id')
+      // console.log(id)
+      // console.log(parentNode)
       parentNode.html("")
+      console.log(parentNode.html())
+
+      console.log("0903 set timer when two click diff")
       parentNode.append('<button class="lc-groupclick" id=' + '"' + id + '"' + '>' + content + '</button>')
       gAjaxPost.lasttimeGroupMembers.splice(0, gAjaxPost.lasttimeGroupMembers.length)   //获取新的群组时，应先清空和上一次相关的群成员ID
       // gAjaxPost.Interval=setInterval("ListenCurrGroupMembers("+gAjaxPost.lasttime_selector+")",1000);
@@ -117,12 +124,12 @@ function initRightDownRegion() {
         gAjaxPost.aysncPost("../../jsonGateway.php", JSON.stringify(jsondata), function (response) {
           addGroupMembers(response, groupID)
         })
-      }, 1000);
+      }, 100);
     }
     //ListenCurrGroupMembers(this)
     gAjaxPost.lasttime_selector = gAjaxPost.curr_selector
   })
-
+  
 }
 function clickGroupName() {
   $("div.rightDown").on('click', 'div.lc-groupArea button.lc-groupclick', function () {
@@ -148,27 +155,30 @@ function ListenCurrGroupMembers(select) {
   // })
 }
 function addGroupMembers(response, groupID) {
-  var members = JSON.parse(response)['data']
-  gAjaxPost.currGroupMembers.splice(0, gAjaxPost.currGroupMembers.length)
-  for (var i = 0; i < members.length; i++) {
-    gAjaxPost.currGroupMembers[i] = members[i]['userID']
-  }
-  //remove gropuMembers offline
-  for (var i = 0; i < gAjaxPost.lasttimeGroupMembers.length; i++) {
-    if (gAjaxPost.currGroupMembers.indexOf(gAjaxPost.lasttimeGroupMembers[i]) == -1)
-      $("#group" + groupID + 'userID' + gAjaxPost.lasttimeGroupMembers[i]).remove()
-  }
-  //add new members
-  for (var i = 0; i < gAjaxPost.currGroupMembers.length; i++) {
-    if (gAjaxPost.lasttimeGroupMembers.indexOf(gAjaxPost.currGroupMembers[i]) == -1) {
-      var childdiv = '<div class="groupMember forclick" id="group' + groupID + 'userID' + gAjaxPost.currGroupMembers[i] + '"></div>'
-      var parentdiv = $('#divgroup' + groupID)
-      parentdiv.append(childdiv)
-      $('#group' + groupID + 'userID' + gAjaxPost.currGroupMembers[i]).html(members[i]['userName'])
+  var curr_groupid = $(gAjaxPost.curr_selector).attr('id').substr(11)
+  if (curr_groupid == groupID) {
+    var members = JSON.parse(response)['data']
+    gAjaxPost.currGroupMembers.splice(0, gAjaxPost.currGroupMembers.length)
+    for (var i = 0; i < members.length; i++) {
+      gAjaxPost.currGroupMembers[i] = members[i]['userID']
     }
+    //remove gropuMembers offline
+    for (var i = 0; i < gAjaxPost.lasttimeGroupMembers.length; i++) {
+      if (gAjaxPost.currGroupMembers.indexOf(gAjaxPost.lasttimeGroupMembers[i]) == -1)
+        $("#group" + groupID + 'userID' + gAjaxPost.lasttimeGroupMembers[i]).remove()
+    }
+    //add new members
+    for (var i = 0; i < gAjaxPost.currGroupMembers.length; i++) {
+      if (gAjaxPost.lasttimeGroupMembers.indexOf(gAjaxPost.currGroupMembers[i]) == -1) {
+        var childdiv = '<div class="groupMember forclick" id="group' + groupID + 'userID' + gAjaxPost.currGroupMembers[i] + '"></div>'
+        var parentdiv = $('#divgroup' + groupID)
+        parentdiv.append(childdiv)
+        $('#group' + groupID + 'userID' + gAjaxPost.currGroupMembers[i]).html(members[i]['userName'])
+      }
+    }
+    gAjaxPost.lasttimeGroupMembers.splice(0, gAjaxPost.lasttimeGroupMembers.length)
+    gAjaxPost.lasttimeGroupMembers = [].concat(gAjaxPost.currGroupMembers)
   }
-  gAjaxPost.lasttimeGroupMembers.splice(0, gAjaxPost.lasttimeGroupMembers.length)
-  gAjaxPost.lasttimeGroupMembers = [].concat(gAjaxPost.currGroupMembers)
 }
 function getGroupList() {
   var jsondata = {
